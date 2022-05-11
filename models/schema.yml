@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: BOBBIE
+    schema: PUBLIC
+    tables:
+      - name: BOBBIE_AGG
+      - name: BOBBIE_WEEKLY
+ 
+ 
