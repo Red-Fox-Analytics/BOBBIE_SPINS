@@ -1,9 +1,13 @@
-  WITH bobbie_data AS (
-	select "Reporting_Level" PRODUCT_LEVEL,"Subcategory" SUBCATEGORY,"Brand" BRAND, "Product_Universe" PRODUCT_UNIVERSE , "UPC" UPC, "Description" PRODUCT_DESCRIPTION 
+WITH bobbie_data AS (
+	select "Reporting_Level" PRODUCT_LEVEL,"Subcategory" SUBCATEGORY
+			,"Brand" BRAND
+			, bbm.MAJOR_BRAND  MAJOR_BRAND
+			, "Product_Universe" PRODUCT_UNIVERSE , "UPC" UPC, "Description" PRODUCT_DESCRIPTION 
 			,"TIME_PERIOD_END_DATE" TIME_PERIOD_END_DATE, "Geography" GEOGRAPHY, "POSITIONING_GROUP" POSITIONING_GROUP , "Category" CATEGORY, "COMPANY" COMPANY
 			, "PRODUCT_TYPE" PRODUCT_TYPE,    "LABELED_NON_GMO" LABELED_NON_GMO 
 			, "Department" DEPARTMENT, "STORAGE" STORAGE, "UNIT_OF_MEASURE" UNIT_OF_MEASURE
 			, "LABELED_ORGANIC" LABELED_ORGANIC, "PACK_COUNT" PACK_COUNT,  "SIZE" "SIZE"
+			
 			, case when "TIME_PERIOD"='4 Weeks' then '04 Weeks' else "TIME_PERIOD" end TIME_PERIOD
 			, CASE when "TIME_PERIOD"='4 Weeks' then '04W' 
 		 	   when "TIME_PERIOD"='12 Weeks' then '12W' 
@@ -62,17 +66,11 @@
 			, max("YAGO_WEIGHT_WEEKS_PROMO") AS WEIGHT_WEEKS_ANY_PROMO_YA_RF
 			, case when max("WEEKS_SELLING") is null then 0 else max("WEEKS_SELLING") end  as NUMBER_OF_WEEKS_SELLING_RF
 			, case when max("YAGO_WEEKS_SELLING") is null then 0 else max("YAGO_WEEKS_SELLING") end as NUMBER_OF_WEEKS_SELLING_YA_RF
-	from {{source('BOBBIE','BOBBIE_WEEKLY')}}--"PUBLIC".BOBBIE_WEEKLY 
-	GROUP BY 	"Reporting_Level" ,"Subcategory" ,"Brand" , "Product_Universe"  , "UPC" , "Description"  
-				,"TIME_PERIOD_END_DATE" , "Geography" , "POSITIONING_GROUP"  , "Category" , "COMPANY" 
-				, "PRODUCT_TYPE" ,    "LABELED_NON_GMO"  
-				, "Department" , "STORAGE" , "UNIT_OF_MEASURE" 
-				, "LABELED_ORGANIC" , "PACK_COUNT" ,  "SIZE" 
-				, case when "TIME_PERIOD"='4 Weeks' then '04 Weeks' else "TIME_PERIOD" end 
-				, CASE when "TIME_PERIOD"='4 Weeks' then '04W' 
-			 	   when "TIME_PERIOD"='12 Weeks' then '12W' 
-				   when "TIME_PERIOD"='24 Weeks' then '24W' 
-				   when "TIME_PERIOD"='52 Weeks' then '52W' 
-				   else "TIME_PERIOD" end 
+
+	from {{source('BOBBIE','BOBBIE_WEEKLY')}} bw--"PUBLIC".BOBBIE_WEEKLY 
+	LEFT JOIN BOBBIE."PUBLIC".BOBBIE_BRAND_MAPPING bbm
+	ON bw."Brand" = bbm.BRAND 
+	GROUP BY 	1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22
+	
 )
 SELECT * FROM bobbie_data
